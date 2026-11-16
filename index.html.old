@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>制造业英语-马来语学习平台 | Manufacturing Learning Platform</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 { font-size: 32px; margin-bottom: 10px; }
+        .header p { font-size: 16px; opacity: 0.9; }
+        
+        .nav {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .nav-item {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-right: 1px solid #dee2e6;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .nav-item:last-child { border-right: none; }
+        .nav-item:hover { background: #e9ecef; }
+        .nav-item.active { background: #667eea; color: white; }
+        
+        .content { padding: 40px; min-height: 500px; }
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .category-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .category-icon { font-size: 48px; margin-bottom: 15px; }
+        .category-name { font-size: 18px; font-weight: 600; color: #212529; margin-bottom: 8px; }
+        .category-count { font-size: 14px; color: #6c757d; }
+        
+        .vocab-list { display: none; }
+        .vocab-list.active { display: block; }
+        
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .back-btn:hover { background: #5a6268; }
+        
+        .vocab-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .vocab-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .vocab-en {
+            font-size: 24px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .speak-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .speak-btn:hover { background: #5568d3; }
+        
+        .vocab-zh { font-size: 18px; color: #495057; margin-bottom: 8px; }
+        .vocab-ms { font-size: 18px; color: #6c757d; font-style: italic; margin-bottom: 15px; }
+        
+        .example {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .example-en { font-size: 16px; color: #212529; margin-bottom: 8px; }
+        .example-zh { font-size: 14px; color: #6c757d; }
+        
+        .dialogue-section {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+        
+        .dialogue-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .dialogue-line {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .dialogue-line:nth-child(odd) { background: #f8f9fa; }
+        .speaker { font-weight: 600; color: #667eea; margin-bottom: 8px; }
+        .line-en { font-size: 16px; color: #212529; margin-bottom: 5px; }
+        .line-zh { font-size: 14px; color: #6c757d; }
+        
+        .listening-section {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .listening-title { font-size: 24px; font-weight: 700; color: #212529; margin-bottom: 30px; }
+        
+        .word-display {
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 40px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .listening-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .control-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .control-btn:hover { background: #5568d3; }
+        .control-btn.secondary { background: #6c757d; }
+        .control-btn.secondary:hover { background: #5a6268; }
+        
+        .stats {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 32px; font-weight: 700; color: #667eea; }
+        .stat-label { font-size: 14px; color: #6c757d; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>制造业英语-马来语学习平台</h1>
+            <p>Manufacturing English-Malay Learning Platform</p>
+        </div>
+        
+        <div class="nav">
+            <div class="nav-item active" onclick="switchTab('vocab', event)">📚 专业词汇</div>
+            <div class="nav-item" onclick="switchTab('dialogue', event)">💬 情景对话</div>
+            <div class="nav-item" onclick="switchTab('listening', event)">🎧 听力训练</div>
+        </div>
+        
+        <div class="content">
+            <div id="vocab-section" class="section active">
+                <div class="category-grid" id="categoryGrid"></div>
+                <div class="vocab-list" id="vocabList"></div>
+            </div>
+            
+            <div id="dialogue-section" class="section">
+                <div id="dialogueContent"></div>
+            </div>
+            
+            <div id="listening-section" class="section">
+                <div class="listening-section">
+                    <div class="listening-title">🎧 听力训练 - 单词听写</div>
+                    <div class="word-display" id="listeningWord">点击开始按钮</div>
+                    <div class="listening-controls">
+                        <button class="control-btn" onclick="startListening()">开始训练</button>
+                        <button class="control-btn secondary" onclick="showAnswer()">显示答案</button>
+                        <button class="control-btn" onclick="nextWord()">下一个</button>
+                    </div>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="correctCount">0</div>
+                            <div class="stat-label">正确</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalCount">0</div>
+                            <div class="stat-label">总计</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="accuracy">0%</div>
+                            <div class="stat-label">准确率</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Vocabulary Data
+        const VOCABULARY = {
+            quality: {
+                name: "品质管理 / Quality Management",
+                icon: "🔍",
+                words: [
+                    { en: "Quality Control (QC)", zh: "品质控制", ms: "Kawalan Kualiti", example: "QC checks are performed every two hours.", example_zh: "品质检查每两小时进行一次。" },
+                    { en: "Quality Assurance (QA)", zh: "品质保证", ms: "Jaminan Kualiti", example: "QA ensures products meet specifications.", example_zh: "品质保证确保产品符合规格。" },
+                    { en: "Inspection", zh: "检验", ms: "Pemeriksaan", example: "Please arrange an inspection for this batch.", example_zh: "请安排这批货物的检验。" },
+                    { en: "IQC (Incoming Quality Control)", zh: "来料检验", ms: "Kawalan Kualiti Masuk", example: "IQC found 3 defective units in this shipment.", example_zh: "来料检验发现这批货有3个不良品。" },
+                    { en: "IPQC (In-Process Quality Control)", zh: "制程检验", ms: "Kawalan Kualiti Proses", example: "IPQC monitors production quality in real-time.", example_zh: "制程检验实时监控生产品质。" },
+                    { en: "FQC (Final Quality Control)", zh: "最终检验", ms: "Kawalan Kualiti Akhir", example: "FQC must approve before shipping.", example_zh: "出货前必须通过最终检验。" },
+                    { en: "Defective / Defect", zh: "不良品/缺陷", ms: "Cacat / Kerosakan", example: "We found 5 defective units in this lot.", example_zh: "我们在这批货中发现了5个不良品。" },
+                    { en: "Non-conformance", zh: "不符合项", ms: "Ketidakpatuhan", example: "This is a non-conformance to the specification.", example_zh: "这是不符合规格的。" },
+                    { en: "Root Cause Analysis (RCA)", zh: "根本原因分析", ms: "Analisis Punca Akar", example: "We need to complete the RCA within 24 hours.", example_zh: "我们需要在24小时内完成根本原因分析。" },
+                    { en: "8D Report", zh: "8D报告", ms: "Laporan 8D", example: "Please submit the 8D report to the customer.", example_zh: "请将8D报告提交给客户。" },
+                    { en: "Corrective Action", zh: "纠正措施", ms: "Tindakan Pembetulan", example: "Corrective actions must be implemented immediately.", example_zh: "纠正措施必须立即执行。" },
+                    { en: "Preventive Action", zh: "预防措施", ms: "Tindakan Pencegahan", example: "We added a preventive action to avoid recurrence.", example_zh: "我们增加了预防措施以避免再次发生。" },
+                    { en: "Sampling", zh: "抽样", ms: "Persampelan", example: "We use random sampling for quality checks.", example_zh: "我们使用随机抽样进行品质检查。" },
+                    { en: "AQL (Acceptable Quality Level)", zh: "可接受品质水平", ms: "Tahap Kualiti Diterima", example: "The AQL for major defects is 0.65.", example_zh: "主要缺陷的AQL是0.65。" },
+                    { en: "Specification", zh: "规格", ms: "Spesifikasi", example: "The product does not meet the specification.", example_zh: "产品不符合规格。" },
+                    { en: "Tolerance", zh: "公差", ms: "Toleransi", example: "The tolerance for this dimension is ±0.1mm.", example_zh: "这个尺寸的公差是±0.1mm。" },
+                    { en: "Calibration", zh: "校准", ms: "Penentukuran", example: "Equipment calibration is due next month.", example_zh: "设备校准下个月到期。" },
+                    { en: "Rework", zh: "返工", ms: "Kerja Semula", example: "This lot needs to be reworked.", example_zh: "这批货需要返工。" },
+                    { en: "Scrap", zh: "报废", ms: "Buangan", example: "The scrap rate increased to 5% this month.", example_zh: "本月报废率上升到5%。" },
+                    { en: "Audit", zh: "审核", ms: "Audit", example: "The customer audit is scheduled for next week.", example_zh: "客户审核安排在下周。" }
+                ]
+            },
+            production: {
+                name: "生产制造 / Production",
+                icon: "🏭",
+                words: [
+                    { en: "Production Line", zh: "生产线", ms: "Barisan Pengeluaran", example: "Production line 3 is down for maintenance.", example_zh: "3号生产线停机维护。" },
+                    { en: "Assembly", zh: "组装", ms: "Pemasangan", example: "Assembly takes about 15 minutes per unit.", example_zh: "每个单元的组装大约需要15分钟。" },
+                    { en: "Machine", zh: "机器", ms: "Mesin", example: "The machine needs calibration before use.", example_zh: "机器使用前需要校准。" },
+                    { en: "Maintenance", zh: "维护", ms: "Penyelenggaraan", example: "Scheduled maintenance is done every month.", example_zh: "定期维护每月进行一次。" },
+                    { en: "Breakdown", zh: "故障", ms: "Kerosakan", example: "The CNC machine had a breakdown yesterday.", example_zh: "CNC机床昨天发生了故障。" },
+                    { en: "Operator", zh: "操作员", ms: "Pengendali", example: "The operator needs more training.", example_zh: "操作员需要更多培训。" },
+                    { en: "Shift", zh: "班次", ms: "Syif", example: "Night shift starts at 10 PM.", example_zh: "夜班从晚上10点开始。" },
+                    { en: "Output", zh: "产量", ms: "Pengeluaran", example: "Today's output is 500 units.", example_zh: "今天的产量是500台。" },
+                    { en: "Yield Rate", zh: "良率", ms: "Kadar Hasil", example: "The yield rate dropped below 95%.", example_zh: "良率降到了95%以下。" },
+                    { en: "Efficiency", zh: "效率", ms: "Kecekapan", example: "Line efficiency improved to 92%.", example_zh: "线效率提高到92%。" },
+                    { en: "SOP (Standard Operating Procedure)", zh: "标准操作程序", ms: "Prosedur Operasi Standard", example: "Please follow the SOP strictly.", example_zh: "请严格遵守SOP。" },
+                    { en: "Raw Material", zh: "原材料", ms: "Bahan Mentah", example: "Raw materials are stored in warehouse A.", example_zh: "原材料存放在A仓库。" },
+                    { en: "WIP (Work in Process)", zh: "在制品", ms: "Kerja Dalam Proses", example: "WIP inventory is too high, we need to reduce it.", example_zh: "在制品库存太高，需要减少。" },
+                    { en: "Finished Goods", zh: "成品", ms: "Barang Siap", example: "Finished goods are ready for shipment.", example_zh: "成品已准备好出货。" },
+                    { en: "Batch", zh: "批次", ms: "Kelompok", example: "This batch was produced on Monday.", example_zh: "这批货是周一生产的。" }
+                ]
+            },
+            procurement: {
+                name: "采购与供应链 / Procurement",
+                icon: "📦",
+                words: [
+                    { en: "Purchase Order (PO)", zh: "采购订单", ms: "Pesanan Pembelian", example: "Please issue the PO by end of day.", example_zh: "请在今天结束前发出采购订单。" },
+                    { en: "Supplier / Vendor", zh: "供应商", ms: "Pembekal", example: "The supplier delivery was delayed by 2 days.", example_zh: "供应商交货延迟了2天。" },
+                    { en: "Quotation", zh: "报价", ms: "Sebut Harga", example: "We received 3 quotations for this project.", example_zh: "我们收到了3份报价。" },
+                    { en: "Lead Time", zh: "交期", ms: "Masa Penghantaran", example: "The lead time is 4 weeks.", example_zh: "交期是4周。" },
+                    { en: "Delivery", zh: "交货", ms: "Penghantaran", example: "Delivery is scheduled for next Monday.", example_zh: "交货安排在下周一。" },
+                    { en: "Warehouse", zh: "仓库", ms: "Gudang", example: "The warehouse is full, we need more space.", example_zh: "仓库已满，需要更多空间。" },
+                    { en: "Inventory", zh: "库存", ms: "Inventori", example: "Inventory turnover ratio is 8 times per year.", example_zh: "库存周转率是每年8次。" },
+                    { en: "Logistics", zh: "物流", ms: "Logistik", example: "Logistics costs increased by 10%.", example_zh: "物流成本增加了10%。" },
+                    { en: "Customs", zh: "海关", ms: "Kastam", example: "The shipment is held at customs.", example_zh: "货物被海关扣押了。" },
+                    { en: "Bill of Materials (BOM)", zh: "物料清单", ms: "Senarai Bahan", example: "The BOM needs to be updated for the new design.", example_zh: "物料清单需要根据新设计更新。" }
+                ]
+            },
+            business: {
+                name: "商务沟通 / Business",
+                icon: "💼",
+                words: [
+                    { en: "Meeting", zh: "会议", ms: "Mesyuarat", example: "The meeting is scheduled for 2 PM.", example_zh: "会议安排在下午2点。" },
+                    { en: "Agenda", zh: "议程", ms: "Agenda", example: "Please share the agenda before the meeting.", example_zh: "请在会议前分享议程。" },
+                    { en: "Minutes of Meeting (MOM)", zh: "会议纪要", ms: "Minit Mesyuarat", example: "I will send the MOM by tomorrow.", example_zh: "我明天发送会议纪要。" },
+                    { en: "Deadline", zh: "截止日期", ms: "Tarikh Akhir", example: "The deadline is extended to Friday.", example_zh: "截止日期延长到周五。" },
+                    { en: "Schedule", zh: "时间表", ms: "Jadual", example: "Let me check my schedule.", example_zh: "让我查看一下时间表。" },
+                    { en: "Presentation", zh: "演示/报告", ms: "Pembentangan", example: "I need to prepare a presentation for the client.", example_zh: "我需要为客户准备一个演示。" },
+                    { en: "Proposal", zh: "提案", ms: "Cadangan", example: "The proposal was approved by management.", example_zh: "提案已被管理层批准。" },
+                    { en: "Approval", zh: "批准", ms: "Kelulusan", example: "We need management approval before proceeding.", example_zh: "我们需要管理层批准才能继续。" },
+                    { en: "Report", zh: "报告", ms: "Laporan", example: "Monthly report is due on the 5th.", example_zh: "月报在5号到期。" },
+                    { en: "Complaint", zh: "投诉", ms: "Aduan", example: "The customer filed a complaint about quality.", example_zh: "客户提出了品质投诉。" }
+                ]
+            },
+            daily: {
+                name: "日常生活 / Daily Life",
+                icon: "🏠",
+                words: [
+                    { en: "Good morning", zh: "早上好", ms: "Selamat pagi", example: "Good morning, everyone!", example_zh: "大家早上好！" },
+                    { en: "Thank you very much", zh: "非常感谢", ms: "Terima kasih banyak", example: "Thank you very much for your help.", example_zh: "非常感谢你的帮助。" },
+                    { en: "You're welcome", zh: "不客气", ms: "Sama-sama", example: "You're welcome, happy to help.", example_zh: "不客气，很高兴能帮忙。" },
+                    { en: "Excuse me", zh: "打扰一下", ms: "Maafkan saya", example: "Excuse me, where is the meeting room?", example_zh: "打扰一下，会议室在哪里？" },
+                    { en: "I'm sorry", zh: "对不起", ms: "Saya minta maaf", example: "I'm sorry for the delay.", example_zh: "对不起，耽误了。" },
+                    { en: "How are you?", zh: "你好吗？", ms: "Apa khabar?", example: "How are you? Long time no see.", example_zh: "你好吗？好久不见。" },
+                    { en: "Where is the restroom?", zh: "洗手间在哪？", ms: "Di mana tandas?", example: "Where is the restroom?", example_zh: "洗手间在哪？" },
+                    { en: "I don't understand", zh: "我不明白", ms: "Saya tidak faham", example: "I don't understand, please explain again.", example_zh: "我不明白，请再解释一次。" },
+                    { en: "How much is this?", zh: "多少钱？", ms: "Berapa harga ini?", example: "How much is this?", example_zh: "这个多少钱？" },
+                    { en: "Delicious", zh: "好吃", ms: "Sedap", example: "The nasi lemak is very delicious!", example_zh: "椰浆饭很好吃！" }
+                ]
+            },
+            safety: {
+                name: "安全与环境 / Safety",
+                icon: "⚠️",
+                words: [
+                    { en: "Safety First", zh: "安全第一", ms: "Keselamatan Pertama", example: "Safety first, production second.", example_zh: "安全第一，生产第二。" },
+                    { en: "PPE (Personal Protective Equipment)", zh: "个人防护装备", ms: "Peralatan Perlindungan Diri", example: "All workers must wear PPE in the factory.", example_zh: "所有工人在工厂必须穿戴防护装备。" },
+                    { en: "Safety Helmet", zh: "安全帽", ms: "Topi Keselamatan", example: "Please wear your safety helmet.", example_zh: "请戴好安全帽。" },
+                    { en: "Emergency Exit", zh: "紧急出口", ms: "Pintu Kecemasan", example: "Keep the emergency exit clear at all times.", example_zh: "紧急出口必须时刻保持畅通。" },
+                    { en: "Fire Extinguisher", zh: "灭火器", ms: "Pemadam Api", example: "Fire extinguishers are at every corridor.", example_zh: "灭火器位于每条走廊。" },
+                    { en: "Accident", zh: "事故", ms: "Kemalangan", example: "No accidents reported this month.", example_zh: "本月未报告任何事故。" },
+                    { en: "Hazard", zh: "危险/隐患", ms: "Bahaya", example: "Please report any hazards immediately.", example_zh: "请立即报告任何隐患。" },
+                    { en: "Risk Assessment", zh: "风险评估", ms: "Penilaian Risiko", example: "Risk assessment must be done before starting work.", example_zh: "开工前必须做风险评估。" }
+                ]
+            }
+        };
+        
+        // Dialogue Data
+        const DIALOGUES = [
+            {
+                title: "来料检验 / Incoming Inspection",
+                lines: [
+                    { speaker: "QC Inspector", en: "Good morning. We have a new shipment to inspect.", zh: "早上好。我们有一批新货要检验。" },
+                    { speaker: "Warehouse Staff", en: "Yes, the materials arrived this morning. Here is the delivery note.", zh: "是的，材料今早到了。这是送货单。" },
+                    { speaker: "QC Inspector", en: "Thank you. Let me check the lot number and quantity first.", zh: "谢谢。让我先检查批号和数量。" },
+                    { speaker: "QC Inspector", en: "The quantity matches. Now let's do the sampling inspection.", zh: "数量对得上。现在做抽样检验。" },
+                    { speaker: "QC Inspector", en: "I found 3 defective units out of 50 samples. The defect rate is 6%.", zh: "50个样品中发现3个不良品。不良率6%。" },
+                    { speaker: "Warehouse Staff", en: "That's above the AQL of 2.5%. What should we do?", zh: "这超过了AQL 2.5%。我们该怎么办？" },
+                    { speaker: "QC Inspector", en: "We need to reject this batch and issue a non-conformance report.", zh: "我们需要拒收这批并开不符合报告。" }
+                ]
+            },
+            {
+                title: "生产线异常 / Production Line Issue",
+                lines: [
+                    { speaker: "Line Leader", en: "QA, we have a problem on line 3. The yield rate dropped to 88%.", zh: "QA，3号线有问题。良率降到88%了。" },
+                    { speaker: "QA Engineer", en: "That's below our target of 95%. When did it start?", zh: "这低于我们95%的目标。什么时候开始的？" },
+                    { speaker: "Line Leader", en: "About 2 hours ago, after we changed the mold.", zh: "大约2小时前，换模具之后。" },
+                    { speaker: "QA Engineer", en: "Let me check the first article inspection. Do you have the FAI report?", zh: "让我检查首件检验。你有FAI报告吗？" },
+                    { speaker: "Line Leader", en: "Yes, here it is. All dimensions are within tolerance.", zh: "有的，在这里。所有尺寸都在公差内。" },
+                    { speaker: "QA Engineer", en: "The issue might be the machine setting. Let's do a root cause analysis.", zh: "问题可能是机器设置。让我们做根本原因分析。" }
+                ]
+            },
+            {
+                title: "供应商会议 / Supplier Meeting",
+                lines: [
+                    { speaker: "Procurement Manager", en: "Thank you for coming. We need to discuss the delivery delay issue.", zh: "感谢到来。我们需要讨论交货延迟问题。" },
+                    { speaker: "Supplier", en: "We apologize for the delay. We had some production issues last month.", zh: "我们为延迟道歉。上个月我们有一些生产问题。" },
+                    { speaker: "Procurement Manager", en: "We understand, but this is affecting our production schedule.", zh: "我们理解，但这影响了我们的生产计划。" },
+                    { speaker: "Supplier", en: "We will increase our capacity and ensure on-time delivery.", zh: "我们会增加产能并确保准时交货。" },
+                    { speaker: "Procurement Manager", en: "Please send us your improvement plan by Friday.", zh: "请在周五前发改善计划给我们。" },
+                    { speaker: "Supplier", en: "Yes, we will. And we can offer a 5% cost reduction for next year.", zh: "好的。我们可以为明年提供5%的降本。" }
+                ]
+            }
+        ];
+        
+        // App Logic
+        let currentCategory = null;
+        let listeningWords = [];
+        let currentListeningIndex = 0;
+        let correctCount = 0;
+        let totalCount = 0;
+        
+        function initCategories() {
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = '';
+            
+            for (const [key, category] of Object.entries(VOCABULARY)) {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.onclick = () => showVocabulary(key);
+                card.innerHTML = `
+                    <div class="category-icon">${category.icon}</div>
+                    <div class="category-name">${category.name}</div>
+                    <div class="category-count">${category.words.length} 个词汇</div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+        
+        function showVocabulary(categoryKey) {
+            currentCategory = categoryKey;
+            const category = VOCABULARY[categoryKey];
+            const vocabList = document.getElementById('vocabList');
+            const categoryGrid = document.getElementById('categoryGrid');
+            
+            categoryGrid.style.display = 'none';
+            vocabList.classList.add('active');
+            
+            vocabList.innerHTML = `
+                <button class="back-btn" onclick="backToCategories()">← 返回分类</button>
+                <h2 style="margin-bottom: 20px; color: #212529;">${category.icon} ${category.name}</h2>
+            `;
+            
+            category.words.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'vocab-card';
+                card.innerHTML = `
+                    <div class="vocab-en">
+                        ${word.en}
+                        <button class="speak-btn" onclick="speak('${word.en.replace(/'/g, "\\'")}')">🔊</button>
+                    </div>
+                    <div class="vocab-zh">${word.zh}</div>
+                    <div class="vocab-ms">Malay: ${word.ms}</div>
+                    <div class="example">
+                        <div class="example-en">${word.example}</div>
+                        <div class="example-zh">${word.example_zh}</div>
+                    </div>
+                `;
+                vocabList.appendChild(card);
+            });
+        }
+        
+        function backToCategories() {
+            document.getElementById('categoryGrid').style.display = 'grid';
+            document.getElementById('vocabList').classList.remove('active');
+            document.getElementById('vocabList').innerHTML = '';
+            currentCategory = null;
+        }
+        
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+        
+        function switchTab(tabName, event) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-section').classList.add('active');
+            
+            if (tabName === 'dialogue') {
+                initDialogues();
+            }
+        }
+        
+        function initDialogues() {
+            const content = document.getElementById('dialogueContent');
+            content.innerHTML = '';
+            
+            DIALOGUES.forEach(dialogue => {
+                const section = document.createElement('div');
+                section.className = 'dialogue-section';
+                
+                let linesHtml = '';
+                dialogue.lines.forEach(line => {
+                    linesHtml += `
+                        <div class="dialogue-line">
+                            <div class="speaker">${line.speaker}</div>
+                            <div class="line-en">
+                                ${line.en}
+                                <button class="speak-btn" style="width: 28px; height: 28px; font-size: 14px;" onclick="speak('${line.en.replace(/'/g, "\\'")}')">🔊</button>
+                            </div>
+                            <div class="line-zh">${line.zh}</div>
+                        </div>
+                    `;
+                });
+                
+                section.innerHTML = `
+                    <div class="dialogue-title">📝 ${dialogue.title}</div>
+                    ${linesHtml}
+                `;
+                content.appendChild(section);
+            });
+        }
+        
+        function startListening() {
+            listeningWords = [];
+            for (const category of Object.values(VOCABULARY)) {
+                listeningWords.push(...category.words);
+            }
+            listeningWords.sort(() => Math.random() - 0.5);
+            currentListeningIndex = 0;
+            correctCount = 0;
+            totalCount = 0;
+            updateStats();
+            nextWord();
+        }
+        
+        function nextWord() {
+            if (listeningWords.length === 0) {
+                document.getElementById('listeningWord').textContent = '点击"开始训练"';
+                return;
+            }
+            
+            currentListeningIndex = (currentListeningIndex + 1) % listeningWords.length;
+            
+            const word = listeningWords[currentListeningIndex];
+            document.getElementById('listeningWord').textContent = '听发音，想单词...';
+            speak(word.en);
+            
+            setTimeout(() => {
+                speak(word.en);
+            }, 2000);
+        }
+        
+        function showAnswer() {
+            if (listeningWords.length === 0) return;
+            
+            const word = listeningWords[currentListeningIndex];
+            totalCount++;
+            
+            document.getElementById('listeningWord').innerHTML = `
+                <div style="text-align: center;">
+                    <div>${word.en}</div>
+                    <div style="font-size: 20px; margin-top: 10px; color: #6c757d;">${word.zh}</div>
+                </div>
+            `;
+            
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('totalCount').textContent = totalCount;
+            const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+        
+        // Initialize
+        initCategories();
+    </script>
+</body>
+</html>

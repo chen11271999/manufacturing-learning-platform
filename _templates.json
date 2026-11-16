@@ -1,0 +1,274 @@
+[
+    {
+        "title": "纠正预防措施报告",
+        "titleEn": "CAPA Report (Corrective and Preventive Action)",
+        "template": [
+            {
+                "en": "CAPA Report No.: [number]  Date: [date]",
+                "zh": "纠正预防措施报告编号：[编号] 日期：[日期]"
+            },
+            {
+                "en": "Source: [Customer Complaint / Internal Audit / Process Monitoring]",
+                "zh": "来源：[客户投诉 / 内部审核 / 过程监控]"
+            },
+            {
+                "en": "Problem Description: [detailed description of nonconformity]",
+                "zh": "问题描述：[不符合项的详细描述]"
+            },
+            {
+                "en": "Root Cause Analysis (5 Why / Fishbone):",
+                "zh": "根本原因分析（5 Why / 因果图）："
+            },
+            {
+                "en": "  - Why 1: [cause] → Why 2: [cause] → Why 3: [cause]",
+                "zh": "  - 为什么1：[原因] → 为什么2：[原因] → 为什么3：[原因]"
+            },
+            {
+                "en": "Corrective Action: [immediate action to fix current issue]",
+                "zh": "纠正措施：[解决当前问题的即时行动]"
+            },
+            {
+                "en": "Preventive Action: [systemic action to prevent recurrence]",
+                "zh": "预防措施：[防止再发生的系统性行动]"
+            },
+            {
+                "en": "Responsible Person: [name]  Target Date: [date]",
+                "zh": "责任人：[姓名] 目标日期：[日期]"
+            },
+            {
+                "en": "Verification Method: [how effectiveness will be confirmed]",
+                "zh": "验证方法：[如何确认有效性]"
+            },
+            {
+                "en": "Status: [Open / In Progress / Closed]  Verified by: [name]",
+                "zh": "状态：[未关闭 / 进行中 / 已关闭] 验证人：[姓名]"
+            }
+        ]
+    },
+    {
+        "title": "设备维修申请单",
+        "titleEn": "Equipment Repair Request Form",
+        "template": [
+            {
+                "en": "Equipment Repair Request No.: [number]  Date: [date]",
+                "zh": "设备维修申请单编号：[编号] 日期：[日期]"
+            },
+            {
+                "en": "Equipment Name: [name]  Asset No.: [asset number]",
+                "zh": "设备名称：[名称] 资产编号：[资产编号]"
+            },
+            {
+                "en": "Location: [department / production line]",
+                "zh": "所在位置：[部门 / 产线]"
+            },
+            {
+                "en": "Fault Description: [detailed description of the problem]",
+                "zh": "故障描述：[问题的详细描述]"
+            },
+            {
+                "en": "Fault Occurred At: [date and time]",
+                "zh": "故障发生时间：[日期和时间]"
+            },
+            {
+                "en": "Impact on Production: [downtime hours / affected output]",
+                "zh": "对生产的影响：[停机时长 / 受影响产量]"
+            },
+            {
+                "en": "Requested Repair Type: [Internal / External Vendor]",
+                "zh": "申请维修类型：[内部维修 / 外部供应商]"
+            },
+            {
+                "en": "Priority: [Urgent / High / Normal]  Requested by: [name]",
+                "zh": "优先级：[紧急 / 高 / 正常] 申请人：[姓名]"
+            },
+            {
+                "en": "Estimated Completion Date: [date]",
+                "zh": "预计完成日期：[日期]"
+            },
+            {
+                "en": "Approval: Supervisor [name]  Manager [name]",
+                "zh": "审批：主管[姓名] 经理[姓名]"
+            }
+        ]
+    },
+    {
+        "title": "物料需求计划邮件",
+        "titleEn": "Material Requirements Planning Email",
+        "template": [
+            {
+                "en": "Dear [Procurement Team / Supplier Name],",
+                "zh": "尊敬的[采购团队 / 供应商名]，"
+            },
+            {
+                "en": "Please find below our material requirements for the period [start date] to [end date].",
+                "zh": "以下是[开始日期]至[结束日期]期间的物料需求。"
+            },
+            {
+                "en": "Item: [material name / part number]  Qty: [quantity]  Unit: [unit]",
+                "zh": "物料：[物料名称 / 零件号] 数量：[数量] 单位：[单位]"
+            },
+            {
+                "en": "Required Delivery Date: [date]  Delivery Location: [warehouse / line]",
+                "zh": "要求交货日期：[日期] 交货地点：[仓库 / 产线]"
+            },
+            {
+                "en": "Current Stock Level: [quantity]  Safety Stock: [quantity]",
+                "zh": "当前库存水平：[数量] 安全库存：[数量]"
+            },
+            {
+                "en": "This requirement is based on the production plan for [project / product line].",
+                "zh": "此需求基于[项目 / 产品线]的生产计划。"
+            },
+            {
+                "en": "Please confirm availability and provide a quotation at your earliest convenience.",
+                "zh": "请确认供应能力并尽早提供报价。"
+            },
+            {
+                "en": "For any technical clarifications, please contact [name] at [email/phone].",
+                "zh": "如有技术疑问，请联系[姓名]，邮箱/电话：[邮箱/电话]。"
+            },
+            {
+                "en": "Best regards,",
+                "zh": "此致敬意，"
+            }
+        ]
+    },
+    {
+        "title": "生产异常报告",
+        "titleEn": "Production Anomaly Report",
+        "template": [
+            {
+                "en": "Production Anomaly Report No.: [number]  Date: [date]",
+                "zh": "生产异常报告编号：[编号] 日期：[日期]"
+            },
+            {
+                "en": "Production Line: [line]  Shift: [shift]  Product: [product / batch]",
+                "zh": "产线：[产线] 班次：[班次] 产品：[产品 / 批次]"
+            },
+            {
+                "en": "Anomaly Type: [Quality / Equipment / Material / Process / Safety]",
+                "zh": "异常类型：[品质 / 设备 / 物料 / 工艺 / 安全]"
+            },
+            {
+                "en": "Description: [detailed description of the anomaly]",
+                "zh": "描述：[异常的详细描述]"
+            },
+            {
+                "en": "Time Detected: [time]  Reported by: [name]",
+                "zh": "发现时间：[时间] 报告人：[姓名]"
+            },
+            {
+                "en": "Immediate Action Taken: [containment actions]",
+                "zh": "已采取的即时措施：[围堵措施]"
+            },
+            {
+                "en": "Affected Quantity: [number of units / batches]",
+                "zh": "受影响数量：[件数 / 批次数]"
+            },
+            {
+                "en": "Root Cause (preliminary): [initial findings]",
+                "zh": "根本原因（初步）：[初步发现]"
+            },
+            {
+                "en": "Follow-up Action Plan: [actions / owner / due date]",
+                "zh": "后续行动计划：[措施 / 负责人 / 截止日期]"
+            },
+            {
+                "en": "Disposition: [Rework / Scrap / Use As-Is / Sort]  Approved by: [name]",
+                "zh": "处置方式：[返工 / 报废 / 照用 / 挑选] 审批人：[姓名]"
+            }
+        ]
+    },
+    {
+        "title": "供应商评估报告",
+        "titleEn": "Supplier Evaluation Report",
+        "template": [
+            {
+                "en": "Supplier Evaluation Report - [Supplier Name]",
+                "zh": "供应商评估报告 - [供应商名称]"
+            },
+            {
+                "en": "Evaluation Date: [date]  Evaluator: [name / department]",
+                "zh": "评估日期：[日期] 评估人：[姓名 / 部门]"
+            },
+            {
+                "en": "Supplier Category: [Raw Material / Component / Service]",
+                "zh": "供应商类别：[原材料 / 零部件 / 服务]"
+            },
+            {
+                "en": "Quality Performance (weight 30%): Score [x]/100",
+                "zh": "品质表现（权重30%）：评分[x]/100"
+            },
+            {
+                "en": "  - Incoming inspection pass rate: [x]%  NCR count: [number]",
+                "zh": "  - 来料检验合格率：[x]% NCR数量：[数量]"
+            },
+            {
+                "en": "Delivery Performance (weight 25%): Score [x]/100",
+                "zh": "交货表现（权重25%）：评分[x]/100"
+            },
+            {
+                "en": "  - On-time delivery rate: [x]%  Lead time adherence: [rating]",
+                "zh": "  - 准时交货率：[x]% 交期遵守度：[评级]"
+            },
+            {
+                "en": "Cost Competitiveness (weight 20%): Score [x]/100",
+                "zh": "成本竞争力（权重20%）：评分[x]/100"
+            },
+            {
+                "en": "Responsiveness & Service (weight 15%): Score [x]/100",
+                "zh": "响应与服务（权重15%）：评分[x]/100"
+            },
+            {
+                "en": "Overall Score: [x]/100  Rating: [A/B/C/D]  Recommendation: [Approved / Conditional / Disqualified]",
+                "zh": "总分：[x]/100 评级：[A/B/C/D] 建议：[合格 / 有条件合格 / 不合格]"
+            }
+        ]
+    },
+    {
+        "title": "品质改善提案",
+        "titleEn": "Quality Improvement Proposal",
+        "template": [
+            {
+                "en": "Quality Improvement Proposal No.: [number]  Date: [date]",
+                "zh": "品质改善提案编号：[编号] 日期：[日期]"
+            },
+            {
+                "en": "Proposed by: [name / department]  Category: [Process / Product / System]",
+                "zh": "提案人：[姓名 / 部门] 类别：[工艺 / 产品 / 体系]"
+            },
+            {
+                "en": "Current Situation: [describe the existing problem or opportunity]",
+                "zh": "现状：[描述现有的问题或改进机会]"
+            },
+            {
+                "en": "Data Evidence: [metrics, defect rate, cost impact]",
+                "zh": "数据依据：[指标、不良率、成本影响]"
+            },
+            {
+                "en": "Proposed Improvement: [detailed description of the change]",
+                "zh": "改善方案：[变更的详细描述]"
+            },
+            {
+                "en": "Expected Benefits: [quantified improvements / cost savings]",
+                "zh": "预期收益：[量化的改善 / 成本节约]"
+            },
+            {
+                "en": "Resources Required: [manpower / budget / equipment / timeline]",
+                "zh": "所需资源：[人力 / 预算 / 设备 / 时间线]"
+            },
+            {
+                "en": "Risk Assessment: [potential risks and mitigation plans]",
+                "zh": "风险评估：[潜在风险及缓解计划]"
+            },
+            {
+                "en": "Implementation Plan: [phases / milestones / owners]",
+                "zh": "实施计划：[阶段 / 里程碑 / 负责人]"
+            },
+            {
+                "en": "Approval: Manager [name]  Director [name]  Decision: [Approved / Rejected / Revise]",
+                "zh": "审批：经理[姓名] 总监[姓名] 决定：[批准 / 驳回 / 修改]"
+            }
+        ]
+    }
+]
