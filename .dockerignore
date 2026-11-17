@@ -1,0 +1,6 @@
+node_modules/  
+data/*.db  
+.git  
+*.log  
+fly.toml  
+fix_git.js 
