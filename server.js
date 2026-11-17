@@ -1,339 +1,241 @@
 const express = require('express');
-const Database = require('better-sqlite3');
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const path = require('path');
 const cors = require('cors');
 
 const app = express();
-// PORT from env or default
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
-
-// Database setup
-// Ensure data directory exists
-const fs = require('fs');
-if (!fs.existsSync('data')) fs.mkdirSync('data', { recursive: true });
-const db = new Database('data/learning.db');
-db.pragma('journal_mode = WAL');
-
-// Database migration: ensure role column exists
-try {
-  const columns = db.prepare("PRAGMA table_info(users)").all();
-  const hasRole = columns.some(c => c.name === 'role');
-  if (!hasRole) {
-    console.log('[Migration] Adding role column...');
-    db.exec("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'");
-  }
-} catch (e) {
-  console.error('[Migration] Error:', e.message);
-}
-
-// Create tables
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    department TEXT,
-    role TEXT DEFAULT 'user',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS learning_progress (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    word_id TEXT NOT NULL,
-    category TEXT NOT NULL,
-    status TEXT DEFAULT 'new',
-    review_count INTEGER DEFAULT 0,
-    last_reviewed DATETIME,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-  );
-
-  CREATE TABLE IF NOT EXISTS daily_activity (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    date DATE NOT NULL,
-    words_learned INTEGER DEFAULT 0,
-    dialogues_completed INTEGER DEFAULT 0,
-    listening_correct INTEGER DEFAULT 0,
-    malay_exercises INTEGER DEFAULT 0,
-    points INTEGER DEFAULT 0,
-    UNIQUE(user_id, date),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-  );
-`);
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', time: new Date().toISOString() });
-});
-
-// JWT Secret
+const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'manufacturing-learning-2024';
 
-// Auth middleware
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
+// PostgreSQL connection pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_Jdspqar9n8Dj@ep-snowy-grass-arwl5sw6-pooler.c-4.us-west-2.aws.neon.tech/neondb?sslmode=require',
+  ssl: { rejectUnauthorized: false }
+});
+
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.static('public'));
+
+// Initialize database tables
+async function initDB() {
+  const client = await pool.connect();
+  try {
+    await client.query(
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        department VARCHAR(100),
+        role VARCHAR(20) DEFAULT 'user',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    );
+    await client.query(
+      CREATE TABLE IF NOT EXISTS daily_activity (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        date DATE NOT NULL,
+        words_learned INTEGER DEFAULT 0,
+        dialogues_completed INTEGER DEFAULT 0,
+        listening_correct INTEGER DEFAULT 0,
+        malay_exercises INTEGER DEFAULT 0,
+        points INTEGER DEFAULT 0,
+        UNIQUE(user_id, date)
+      )
+    );
+    await client.query(
+      CREATE TABLE IF NOT EXISTS custom_words (
+        id SERIAL PRIMARY KEY,
+        category VARCHAR(100) NOT NULL,
+        subcategory VARCHAR(100),
+        en VARCHAR(255) NOT NULL,
+        zh VARCHAR(255),
+        ms VARCHAR(255),
+        example TEXT,
+        example_zh TEXT,
+        created_by INTEGER REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    );
+    console.log('? Database initialized');
+  } catch (error) {
+    console.error('? Database init error:', error);
+  } finally {
+    client.release();
   }
-  
+}
+
+function authenticateToken(req, res, next) {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Access token required' });
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      if (err.name === 'TokenExpiredError') {
-        return res.status(401).json({ error: 'Token expired', code: 'TOKEN_EXPIRED' });
-      }
-      return res.status(403).json({ error: 'Invalid token' });
-    }
+    if (err) return res.status(403).json({ error: 'Invalid token' });
     req.user = user;
     next();
   });
 }
 
-// Register
-app.post('/api/register', async (req, res) => {
-  try {
-    const { username, password, department } = req.body;
-    
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password required' });
-    }
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    // First registered user becomes admin
-    const userCount = db.prepare('SELECT COUNT(*) as cnt FROM users').get();
-    const role = userCount.cnt === 0 ? 'admin' : 'user';
-    const stmt = db.prepare('INSERT INTO users (username, password, department, role) VALUES (?, ?, ?, ?)');
-    const result = stmt.run(username, hashedPassword, department || '', role);
-    
-    const userId = Number(result.lastInsertRowid);
-    const token = jwt.sign({ id: userId, username }, JWT_SECRET, { expiresIn: '7d' });
-    
-    res.json({ token, user: { id: userId, username, department, role } });
-  } catch (error) {
-    if (error.message.includes('UNIQUE')) {
-      return res.status(400).json({ error: 'Username already exists' });
-    }
-    console.error('Register error:', error);
-    res.status(500).json({ error: 'Registration failed: ' + error.message });
-  }
-});
+function requireAdmin(req, res, next) {
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
+  next();
+}
 
-// Login
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password required' });
-    }
-    
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-    
-    if (!user) {
-      return res.status(401).json({ error: 'User not found' });
-    }
-
+    if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
+    const result = await pool.query('SELECT * FROM users WHERE username = ', [username]);
+    const user = result.rows[0];
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    
-    const token = jwt.sign({ id: Number(user.id), username: user.username }, JWT_SECRET, { expiresIn: '7d' });
-    
-    res.json({ token, user: { id: user.id, username: user.username, department: user.department, role: user.role || 'user' } });
+    if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
+    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { id: user.id, username: user.username, department: user.department, role: user.role } });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed' });
   }
 });
 
-// Verify token
-app.get('/api/verify', authenticateToken, (req, res) => {
+app.post('/api/register', async (req, res) => {
   try {
-    const user = db.prepare('SELECT id, username, department, role FROM users WHERE id = ?').get(req.user.id);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json({ valid: true, user: { id: user.id, username: user.username, department: user.department, role: user.role || 'user' } });
-  } catch (e) {
-    console.error('Verify error:', e);
-    res.status(500).json({ error: 'Verification failed' });
+    const { username, password, department } = req.body;
+    if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
+    const hashed = await bcrypt.hash(password, 10);
+    const result = await pool.query('INSERT INTO users (username, password, department, role) VALUES (, , , ) RETURNING id', [username, hashed, department || '', 'user']);
+    const token = jwt.sign({ id: result.rows[0].id, username, role: 'user' }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { id: result.rows[0].id, username, department: department || '', role: 'user' } });
+  } catch (error) {
+    if (error.code === '23505') return res.status(400).json({ error: 'Username already exists' });
+    res.status(500).json({ error: 'Registration failed' });
   }
 });
 
-// Update daily activity
-app.post('/api/activity', authenticateToken, (req, res) => {
-  const { words_learned, dialogues_completed, listening_correct, malay_exercises } = req.body;
-  const today = new Date().toISOString().split('T')[0];
-  
-  // Scoring rules: vocab +1, listening first-correct +2, others +0
-    const points = (words_learned || 0) * 1 + 
-                 (listening_correct || 0) * 2;
-  
-  const stmt = db.prepare(`
-    INSERT INTO daily_activity (user_id, date, words_learned, dialogues_completed, listening_correct, malay_exercises, points)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(user_id, date) DO UPDATE SET
-      words_learned = words_learned + ?,
-      dialogues_completed = dialogues_completed + ?,
-      listening_correct = listening_correct + ?,
-      malay_exercises = malay_exercises + ?,
-      points = points + ?
-  `);
-  
-  stmt.run(req.user.id, today, words_learned || 0, dialogues_completed || 0, 
-           listening_correct || 0, malay_exercises || 0, points,
-           words_learned || 0, dialogues_completed || 0, 
-           listening_correct || 0, malay_exercises || 0, points);
-  
-  res.json({ success: true, points_earned: points });
-});
-
-// Leaderboard
-app.get('/api/leaderboard/:period', authenticateToken, (req, res) => {
-  const { period } = req.params;
-  let dateFilter = '';
-  
-  if (period === 'daily') {
-    dateFilter = "AND date = date('now')";
-  } else if (period === 'weekly') {
-    dateFilter = "AND date >= date('now', '-7 days')";
+app.post('/api/progress/daily', authenticateToken, async (req, res) => {
+  try {
+    const { date, words_learned, dialogues_completed, listening_correct, malay_exercises, points } = req.body;
+    const progressDate = date || new Date().toISOString().split('T')[0];
+    await pool.query(
+      INSERT INTO daily_activity (user_id, date, words_learned, dialogues_completed, listening_correct, malay_exercises, points)
+      VALUES (, , , , , , )
+      ON CONFLICT (user_id, date)
+      DO UPDATE SET
+        words_learned = daily_activity.words_learned + ,
+        dialogues_completed = daily_activity.dialogues_completed + ,
+        listening_correct = daily_activity.listening_correct + ,
+        malay_exercises = daily_activity.malay_exercises + ,
+        points = daily_activity.points + 
+    , [req.user.id, progressDate, words_learned || 0, dialogues_completed || 0, listening_correct || 0, malay_exercises || 0, points || 0]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Progress error:', error);
+    res.status(500).json({ error: 'Failed to save progress' });
   }
-  
-  const leaderboard = db.prepare(`
-    SELECT u.username, u.department, 
-           SUM(da.points) as total_points,
-           SUM(da.words_learned) as words_learned,
-           SUM(da.listening_correct) * 2 as listening_correct,
-           COUNT(DISTINCT da.date) as active_days
-    FROM users u
-    LEFT JOIN daily_activity da ON u.id = da.user_id ${dateFilter ? 'WHERE 1=1 ' + dateFilter : ''}
-    GROUP BY u.id
-    HAVING total_points > 0
-    ORDER BY total_points DESC
-    LIMIT 50
-  `).all();
-  
-  res.json(leaderboard);
 });
 
-// User stats
-app.get('/api/stats', authenticateToken, (req, res) => {
-  const stats = db.prepare(`
-    SELECT 
-      SUM(words_learned) as total_words,
-      SUM(dialogues_completed) as total_dialogues,
-      SUM(listening_correct) as total_listening,
-      SUM(malay_exercises) as total_malay,
-      SUM(points) as total_points,
-      COUNT(DISTINCT date) as active_days
-    FROM daily_activity
-    WHERE user_id = ?
-  `).get(req.user.id);
-  
-  res.json(stats || { total_words: 0, total_dialogues: 0, total_listening: 0, total_malay: 0, total_points: 0, active_days: 0 });
-});
-
-
-
-// Admin middleware
-function requireAdmin(req, res, next) {
-    const user = db.prepare('SELECT role FROM users WHERE id = ?').get(req.user.id);
-    if (!user || user.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
-    next();
-}
-
-// Admin: Add word (stores in DB, served via API)
-app.post('/api/admin/word', authenticateToken, requireAdmin, (req, res) => {
-    const { category, subcategory, word } = req.body;
-    if (!word.en || !word.zh || !word.ms) return res.status(400).json({ error: 'Missing required fields' });
-    
-    db.exec(`CREATE TABLE IF NOT EXISTS custom_words (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        category TEXT NOT NULL,
-        subcategory TEXT NOT NULL,
-        en TEXT NOT NULL,
-        zh TEXT NOT NULL,
-        ms TEXT NOT NULL,
-        example TEXT DEFAULT '',
-        example_zh TEXT DEFAULT '',
-        created_by INTEGER,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (created_by) REFERENCES users(id)
-    )`);
-    
-    const stmt = db.prepare('INSERT INTO custom_words (category, subcategory, en, zh, ms, example, example_zh, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-    const result = stmt.run(category, subcategory, word.en, word.zh, word.ms, word.example || '', word.example_zh || '', req.user.id);
-    res.json({ id: result.lastInsertRowid, message: 'Word added successfully' });
-});
-
-
-// Admin: Get all custom words
-app.get('/api/admin/words', authenticateToken, requireAdmin, (req, res) => {
+app.get('/api/leaderboard', async (req, res) => {
   try {
-    const words = db.prepare('SELECT * FROM custom_words ORDER BY created_at DESC').all();
-    res.json(words);
-  } catch (e) { res.json([]); }
+    const result = await pool.query(
+      SELECT u.username, u.department,
+        SUM(d.points) as total_points,
+        SUM(d.words_learned) as total_words,
+        COUNT(DISTINCT d.date) as active_days
+      FROM users u
+      LEFT JOIN daily_activity d ON u.id = d.user_id
+      GROUP BY u.id, u.username, u.department
+      HAVING SUM(d.points) > 0
+      ORDER BY total_points DESC
+      LIMIT 50
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Leaderboard error:', error);
+    res.status(500).json({ error: 'Failed to fetch leaderboard' });
+  }
 });
 
-// Admin: Delete a custom word
-app.delete('/api/admin/word/:id', authenticateToken, requireAdmin, (req, res) => {
+app.get('/api/admin/words', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    db.prepare('DELETE FROM custom_words WHERE id = ?').run(req.params.id);
-    res.json({ success: true, message: 'Word deleted' });
-  } catch (e) { res.status(500).json({ error: 'Failed to delete word' }); }
+    const result = await pool.query('SELECT cw.*, u.username as created_by_name FROM custom_words cw LEFT JOIN users u ON cw.created_by = u.id ORDER BY cw.created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch words' });
+  }
 });
 
-// Admin: Upload JSON file (bulk import)
-app.post('/api/admin/upload', authenticateToken, requireAdmin, (req, res) => {
-  const { type, data, category, subcategory } = req.body;
-  if (type === 'words' && Array.isArray(data)) {
+app.post('/api/admin/words', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { category, subcategory, en, zh, ms, example, example_zh } = req.body;
+    const result = await pool.query('INSERT INTO custom_words (category, subcategory, en, zh, ms, example, example_zh, created_by) VALUES (, , , , , , , ) RETURNING *', [category, subcategory || '', en, zh || '', ms || '', example || '', example_zh || '', req.user.id]);
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add word' });
+  }
+});
+
+app.delete('/api/admin/words/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM custom_words WHERE id = ', [req.params.id]);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete word' });
+  }
+});
+
+app.post('/api/admin/upload', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { words } = req.body;
+    if (!Array.isArray(words)) return res.status(400).json({ error: 'Invalid format' });
+    const client = await pool.connect();
+    let inserted = 0;
     try {
-      const stmt = db.prepare('INSERT INTO custom_words (category, subcategory, en, zh, ms, example, example_zh, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-      let count = 0;
-      for (const item of data) {
-        stmt.run(category || 'general', subcategory || 'basic', item.en, item.zh, item.ms, item.example || '', item.example_zh || '', req.user.id);
-        count++;
+      await client.query('BEGIN');
+      for (const word of words) {
+        if (word.category && word.en) {
+          await client.query('INSERT INTO custom_words (category, subcategory, en, zh, ms, example, example_zh, created_by) VALUES (, , , , , , , )', [word.category, word.subcategory || '', word.en, word.zh || '', word.ms || '', word.example || '', word.example_zh || '', req.user.id]);
+          inserted++;
+        }
       }
-      res.json({ message: 'Successfully imported ' + count + ' words' });
-    } catch (e) { res.status(500).json({ error: 'Import failed: ' + e.message }); }
-  } else { res.status(400).json({ error: 'Invalid upload format' }); }
-});
-
-// Admin: Get all users
-app.get('/api/admin/users', authenticateToken, requireAdmin, (req, res) => {
-  try {
-    const users = db.prepare('SELECT id, username, department, role, created_at FROM users ORDER BY created_at DESC').all();
-    res.json(users);
-  } catch (e) { res.status(500).json({ error: 'Failed to fetch users' }); }
-});
-
-// Use PORT from env for cloud deployment
-const PORT = process.env.PORT || 3000;
-
-// === Admin account initialization ===
-(function ensureAdminAccount() {
-  try {
-    const existing = db.prepare('SELECT id FROM users WHERE username = ?').get('cal');
-    if (!existing) {
-      const hashed = bcrypt.hashSync('1234', 10);
-      db.prepare('INSERT INTO users (username, password, department, role) VALUES (?, ?, ?, ?)')
-        .run('cal', hashed, 'Admin', 'admin');
-      console.log('[Init] Admin account created: cal / 1234');
-    } else {
-      db.prepare('UPDATE users SET role = ? WHERE username = ? AND role != ?').run('admin', 'cal', 'admin');
+      await client.query('COMMIT');
+      res.json({ success: true, inserted });
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
     }
-  } catch (e) { console.error('[Init] Admin account error:', e.message); }
-})();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload' });
+  }
+});
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 学习平台已启动: http://localhost:${PORT}`);
-  console.log(`📱 手机访问: http://你的IP:${PORT}`);
+app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, username, department, role, created_at FROM users ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+app.listen(PORT, async () => {
+  console.log(?? Server running on port );
+  await initDB();
+  const client = await pool.connect();
+  try {
+    for (const admin of [{ username: 'testuser', password: 'testuser123' }, { username: 'cal', password: '1234' }]) {
+      const result = await client.query('SELECT id FROM users WHERE username = ', [admin.username]);
+      if (result.rows.length === 0) {
+        const hashed = await bcrypt.hash(admin.password, 10);
+        await client.query('INSERT INTO users (username, password, department, role) VALUES (, , , )', [admin.username, hashed, 'Admin', 'admin']);
+        console.log(? Created admin: );
+      }
+    }
+  } finally {
+    client.release();
+  }
 });
