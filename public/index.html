@@ -88,11 +88,13 @@
                         <button class="control-btn" onclick="startListening()" style="font-size:18px;padding:15px 40px">🚀 开始训练</button>
                         <button class="control-btn secondary" onclick="playListening()">🔊 再听一次</button>
                     </div>
-                    <div class="word-display" id="listeningWord" style="font-size:48px;margin:30px 0;letter-spacing:8px;font-family:monospace">点击"开始训练"按钮</div>
-                    <div id="listeningMeaning" style="text-align:center;font-size:20px;color:#6c757d;margin-bottom:20px;min-height:30px"></div>
-                    <div class="answer-input" style="max-width:500px;margin:0 auto">
-                        <input type="text" id="listeningAnswer" placeholder="输入单词拼写..." onkeypress="if(event.key==='Enter')checkListening()" style="text-align:center;font-size:20px;padding:15px">
-                        <button onclick="checkListening()" class="btn-primary" style="padding:15px 25px;font-size:18px">✅ 检查</button>
+                    <div id="listeningHint" style="font-size:36px;margin:20px 0;letter-spacing:6px;font-family:monospace;text-align:center;color:#667eea;font-weight:600;min-height:50px">点击"开始训练"按钮</div>
+                    <div id="listeningMeaning" style="text-align:center;font-size:20px;color:#6c757d;margin-bottom:15px;min-height:30px"></div>
+                    <div style="max-width:500px;margin:0 auto 10px">
+                        <input type="text" id="listeningAnswer" placeholder="输入单词拼写..." onkeypress="if(event.key==='Enter')checkListening()" style="width:100%;text-align:center;font-size:20px;padding:15px;border:2px solid #e9ecef;border-radius:10px">
+                    </div>
+                    <div style="text-align:center;margin-bottom:10px">
+                        <button onclick="checkListening()" class="btn-primary" style="padding:15px 40px;font-size:18px">✅ 检查</button>
                     </div>
                     <div id="listeningAttempt" style="text-align:center;margin:8px 0;font-size:14px;color:#6c757d"></div>
                     <div id="listeningFeedback" style="text-align:center;margin:8px 0;font-size:16px;min-height:24px"></div>

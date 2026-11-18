@@ -313,8 +313,11 @@ function nextListeningWord() {
     currentWord = listeningWords[listeningIndex];
     listeningAttempts = 0;
 
-    var display = document.getElementById('listeningWord');
-    display.innerHTML = '<div style="font-size:22px;margin-bottom:10px">🎧 听发音，拼写单词</div>';
+    var hintEl = document.getElementById('listeningHint');
+    var word = currentWord.en.replace(/[()]/g, '').trim();
+    var parts = word.split(/\s+/);
+    var initials = parts.map(function(p) { return p.charAt(0).toUpperCase() + '_'.repeat(Math.max(p.length - 1, 1)); }).join(' ');
+    hintEl.innerHTML = initials;
 
     document.getElementById('listeningMeaning').textContent = '中文：' + currentWord.zh;
 
@@ -348,10 +351,13 @@ function checkListening() {
 
     if (isCorrect) {
         listeningTotal++;
-        if (listeningAttempts === 0) listeningCorrect++;
-        fb.innerHTML = '<span style="color:#28a745;font-weight:600">✅ 正确! ' + currentWord.en + '</span>';
+        if (listeningAttempts === 0) {
+            listeningCorrect++;
+            trackActivity({ listening_correct: 1 });
+        }
+        var attemptText = listeningAttempts === 0 ? ' (首次拼对 +2分)' : ' (第2次拼对 +0分)';
+        fb.innerHTML = '<span style="color:#28a745;font-weight:600">✅ 正确! ' + currentWord.en + attemptText + '</span>';
         inp.disabled = true; inp.style.borderColor = '#28a745';
-        trackActivity({ listening_correct: 1 });
         setTimeout(() => nextListeningWord(), 1500);
     } else {
         listeningAttempts++;
@@ -517,8 +523,10 @@ async function loadLeaderboard(period) {
 function initAdmin() {
     if (!isAdmin) return;
     const c = document.getElementById('adminContent');
-    let html = '<div style="margin-bottom:20px;border-bottom:2px solid #e9ecef;display:flex;gap:5px;padding-bottom:10px">';
+    let html = '<div style="margin-bottom:20px;border-bottom:2px solid #e9ecef;display:flex;gap:5px;padding-bottom:10px;flex-wrap:wrap">';
     html += '<button class="control-btn admin-tab active" onclick="switchAdminTab(this,\'vocab\')" style="padding:10px 20px;font-size:14px">\u{1F4DA} 词汇管理</button>';
+    html += '<button class="control-btn admin-tab" onclick="switchAdminTab(this,\'dialogue\')" style="padding:10px 20px;font-size:14px">💬 对话管理</button>';
+    html += '<button class="control-btn admin-tab" onclick="switchAdminTab(this,\'writing\')" style="padding:10px 20px;font-size:14px">✍️ 写作管理</button>';
     html += '<button class="control-btn admin-tab" onclick="switchAdminTab(this,\'bulk\')" style="padding:10px 20px;font-size:14px">\u{1F4E5} 批量导入</button>';
     html += '<button class="control-btn admin-tab" onclick="switchAdminTab(this,\'users\')" style="padding:10px 20px;font-size:14px">\u{1F465} 用户管理</button>';
     html += '<button class="control-btn admin-tab" onclick="switchAdminTab(this,\'wrong\')" style="padding:10px 20px;font-size:14px">\u{1F4D5} 错题本</button>';
@@ -585,6 +593,42 @@ function switchAdminTab(btn, tab) {
         html += '</div>';
         content.innerHTML = html;
     }
+    } else if (tab === 'dialogue') {
+        var html = '<div class="dialogue-section"><div class="dialogue-title">\u2795 添加新对话</div>';
+        html += '<input id="dialogueTitle" placeholder="对话标题 (如：客户验厂)" style="width:100%;padding:10px;border:2px solid #e9ecef;border-radius:8px;margin-bottom:8px">';
+        html += '<input id="dialogueTitleEn" placeholder="English Title" style="width:100%;padding:10px;border:2px solid #e9ecef;border-radius:8px;margin-bottom:10px">';
+        html += '<div id="dialogueLinesContainer" style="margin-bottom:10px"></div>';
+        html += '<button class="control-btn secondary" onclick="addDialogueLine()" style="margin-bottom:10px">\u2795 添加对话行</button><br>';
+        html += '<button class="control-btn" onclick="adminAddDialogue()">\u2795 保存对话</button>';
+        html += '<div id="dialogueResult" style="margin-top:10px"></div></div>';
+        html += '<div class="dialogue-section" style="margin-top:20px"><div class="dialogue-title">\u{1F4CB} 现有对话列表</div><div id="dialogueList">';
+        if (typeof DIALOGUES !== 'undefined') {
+            DIALOGUES.forEach(function(d, idx) {
+                html += '<div style="padding:10px;border-bottom:1px solid #e9ecef"><strong>' + d.title + ' / ' + d.titleEn + '</strong>';
+                html += '<div style="font-size:12px;color:#6c757d">' + d.lines.length + ' 行对话</div></div>';
+            });
+        }
+        html += '</div></div>';
+        content.innerHTML = html;
+        addDialogueLine();
+    } else if (tab === 'writing') {
+        var html = '<div class="dialogue-section"><div class="dialogue-title">\u2795 添加新写作模板</div>';
+        html += '<input id="writingTitle" placeholder="模板标题 (如：品质投诉回复邮件)" style="width:100%;padding:10px;border:2px solid #e9ecef;border-radius:8px;margin-bottom:8px">';
+        html += '<input id="writingTitleEn" placeholder="English Title" style="width:100%;padding:10px;border:2px solid #e9ecef;border-radius:8px;margin-bottom:10px">';
+        html += '<div id="writingLinesContainer" style="margin-bottom:10px"></div>';
+        html += '<button class="control-btn secondary" onclick="addWritingLine()" style="margin-bottom:10px">\u2795 添加模板行</button><br>';
+        html += '<button class="control-btn" onclick="adminAddWriting()">\u2795 保存模板</button>';
+        html += '<div id="writingResult" style="margin-top:10px"></div></div>';
+        html += '<div class="dialogue-section" style="margin-top:20px"><div class="dialogue-title">\u{1F4CB} 现有写作模板</div><div id="writingList">';
+        if (typeof WRITING_TEMPLATES !== 'undefined') {
+            WRITING_TEMPLATES.forEach(function(w, idx) {
+                html += '<div style="padding:10px;border-bottom:1px solid #e9ecef"><strong>' + w.title + ' / ' + w.titleEn + '</strong>';
+                html += '<div style="font-size:12px;color:#6c757d">' + w.template.length + ' 行模板</div></div>';
+            });
+        }
+        html += '</div></div>';
+        content.innerHTML = html;
+        addWritingLine();
 }
 
 async function loadCustomWords() {
@@ -691,6 +735,91 @@ async function adminBulk() {
 
 function clearWrongWords() {
     wrongWords = []; localStorage.removeItem('wrongWords'); initAdmin();
+}
+
+// ===== Admin: Dialogue Management =====
+function addDialogueLine() {
+    var container = document.getElementById('dialogueLinesContainer');
+    if (!container) return;
+    var div = document.createElement('div');
+    div.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center';
+    div.innerHTML = '<input placeholder="Speaker (如: QC Inspector)" class="dlg-speaker" style="width:25%;padding:8px;border:2px solid #e9ecef;border-radius:6px">' +
+        '<input placeholder="English" class="dlg-en" style="flex:1;padding:8px;border:2px solid #e9ecef;border-radius:6px">' +
+        '<input placeholder="中文" class="dlg-zh" style="flex:1;padding:8px;border:2px solid #e9ecef;border-radius:6px">' +
+        '<button onclick="this.parentElement.remove()" style="padding:8px 12px;border:none;background:#dc3545;color:white;border-radius:6px;cursor:pointer">❌</button>';
+    container.appendChild(div);
+}
+
+function adminAddDialogue() {
+    var title = document.getElementById('dialogueTitle').value.trim();
+    var titleEn = document.getElementById('dialogueTitleEn').value.trim();
+    if (!title || !titleEn) {
+        document.getElementById('dialogueResult').innerHTML = '<p style="color:#dc3545">请填写对话标题</p>';
+        return;
+    }
+    var speakers = document.querySelectorAll('.dlg-speaker');
+    var ens = document.querySelectorAll('.dlg-en');
+    var zhs = document.querySelectorAll('.dlg-zh');
+    var lines = [];
+    for (var i = 0; i < speakers.length; i++) {
+        var s = speakers[i].value.trim();
+        var e = ens[i].value.trim();
+        var z = zhs[i].value.trim();
+        if (s && e && z) lines.push({ speaker: s, en: e, zh: z });
+    }
+    if (lines.length === 0) {
+        document.getElementById('dialogueResult').innerHTML = '<p style="color:#dc3545">请至少添加一行完整对话</p>';
+        return;
+    }
+    var dialogue = { title: title, titleEn: titleEn, lines: lines };
+    if (typeof DIALOGUES !== 'undefined') DIALOGUES.push(dialogue);
+    document.getElementById('dialogueResult').innerHTML = '<p style="color:#28a745">✅ 对话已添加: ' + title + ' (' + lines.length + ' 行)</p>';
+    document.getElementById('dialogueTitle').value = '';
+    document.getElementById('dialogueTitleEn').value = '';
+    document.getElementById('dialogueLinesContainer').innerHTML = '';
+    addDialogueLine();
+    setTimeout(function() { switchAdminTab(document.querySelector('.admin-tab.active'), 'dialogue'); }, 1000);
+}
+
+// ===== Admin: Writing Management =====
+function addWritingLine() {
+    var container = document.getElementById('writingLinesContainer');
+    if (!container) return;
+    var div = document.createElement('div');
+    div.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center';
+    div.innerHTML = '<input placeholder="English line" class="wrt-en" style="flex:1;padding:8px;border:2px solid #e9ecef;border-radius:6px">' +
+        '<input placeholder="中文" class="wrt-zh" style="flex:1;padding:8px;border:2px solid #e9ecef;border-radius:6px">' +
+        '<button onclick="this.parentElement.remove()" style="padding:8px 12px;border:none;background:#dc3545;color:white;border-radius:6px;cursor:pointer">❌</button>';
+    container.appendChild(div);
+}
+
+function adminAddWriting() {
+    var title = document.getElementById('writingTitle').value.trim();
+    var titleEn = document.getElementById('writingTitleEn').value.trim();
+    if (!title || !titleEn) {
+        document.getElementById('writingResult').innerHTML = '<p style="color:#dc3545">请填写模板标题</p>';
+        return;
+    }
+    var ens = document.querySelectorAll('.wrt-en');
+    var zhs = document.querySelectorAll('.wrt-zh');
+    var template = [];
+    for (var i = 0; i < ens.length; i++) {
+        var e = ens[i].value.trim();
+        var z = zhs[i].value.trim();
+        if (e && z) template.push({ en: e, zh: z });
+    }
+    if (template.length === 0) {
+        document.getElementById('writingResult').innerHTML = '<p style="color:#dc3545">请至少添加一行完整模板</p>';
+        return;
+    }
+    var writing = { title: title, titleEn: titleEn, template: template };
+    if (typeof WRITING_TEMPLATES !== 'undefined') WRITING_TEMPLATES.push(writing);
+    document.getElementById('writingResult').innerHTML = '<p style="color:#28a745">✅ 写作模板已添加: ' + title + ' (' + template.length + ' 行)</p>';
+    document.getElementById('writingTitle').value = '';
+    document.getElementById('writingTitleEn').value = '';
+    document.getElementById('writingLinesContainer').innerHTML = '';
+    addWritingLine();
+    setTimeout(function() { switchAdminTab(document.querySelector('.admin-tab.active'), 'writing'); }, 1000);
 }
 
 // ===== Activity =====
