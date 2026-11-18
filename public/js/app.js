@@ -175,6 +175,22 @@ function logout() {
     document.getElementById('app').style.display = 'none';
 }
 
+// ===== Learned Words Tracking =====
+function getLearnedKey() { return 'learned_' + currentUser.id; }
+function getLearnedWords() { try { return JSON.parse(localStorage.getItem(getLearnedKey()) || '{}'); } catch(e) { return {}; } }
+function isWordLearned(en) { var lw = getLearnedWords(); return lw[en.toLowerCase().trim()] === true; }
+function markWordLearned(en, cardEl) {
+    var key = en.toLowerCase().trim();
+    var lw = getLearnedWords();
+    if (lw[key]) return; // already learned
+    lw[key] = true;
+    localStorage.setItem(getLearnedKey(), JSON.stringify(lw));
+    if (cardEl) { cardEl.classList.add('word-learned'); }
+    trackActivity({ words_learned: 1 });
+}
+
+
+
 function showApp() {
     document.getElementById('authModal').classList.remove('active');
     document.getElementById('app').style.display = 'block';
@@ -216,7 +232,8 @@ function initCategories() {
         card.innerHTML = '<div class="category-icon">' + cat.icon + '</div><div class="category-name">' + cat.name + '</div><div class="category-count">' + cnt + ' 词</div>';
         grid.appendChild(card);
     }
-    document.getElementById('vocabProgress').textContent = '总词汇: ' + total;
+    var learnedCount = Object.keys(getLearnedWords()).length;
+    document.getElementById('vocabProgress').textContent = '\u5df2\u5b66: ' + learnedCount + ' / ' + total;
 }
 
 function showCategory(key) {
@@ -252,7 +269,6 @@ function showCategory(key) {
         '<button class="malay-tab" onclick="showCatMalay(this,\'reading\')">阅读理解</button></div>' +
         '<div id="catMalayContent"></div></div>';
     vl.innerHTML = html;
-    trackActivity({ words_learned: 1 });
     setTimeout(() => { const ft = vl.querySelector('.malay-tab'); if (ft) showCatMalay(ft, 'spelling', key); }, 100);
 }
 
@@ -820,6 +836,18 @@ function adminAddWriting() {
     document.getElementById('writingLinesContainer').innerHTML = '';
     addWritingLine();
     setTimeout(function() { switchAdminTab(document.querySelector('.admin-tab.active'), 'writing'); }, 1000);
+}
+
+
+
+function handleLearnWord(btn, en) {
+    var card = btn.closest('.vocab-card-mini');
+    markWordLearned(en, card);
+    // Replace button with badge
+    var badge = document.createElement('span');
+    badge.className = 'learned-badge';
+    badge.textContent = '\u2705 已学';
+    btn.replaceWith(badge);
 }
 
 // ===== Activity =====

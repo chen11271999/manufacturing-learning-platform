@@ -673,3 +673,47 @@ body {
     .vocab-grid { grid-template-columns: 1fr; }
     .phrase-grid { grid-template-columns: 1fr; }
 }
+
+
+/* Learned word card styling */
+.word-learned {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb) !important;
+    border-color: #28a745 !important;
+    position: relative;
+}
+.word-learned::after {
+    content: '\2713';
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    color: #28a745;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Learn button styling */
+.learn-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.learn-btn:hover {
+    background: linear-gradient(135deg, #5a6fd6, #6a4190);
+    transform: scale(1.05);
+}
+
+/* Learned badge styling */
+.learned-badge {
+    background: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
