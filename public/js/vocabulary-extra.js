@@ -285,4 +285,68 @@
         );
     }
 
+
+    // engineering/power_electronics - 50 new inverter words
+    if (VOCABULARY.engineering) {
+        if (!VOCABULARY.engineering.subcategories.power_electronics) {
+            VOCABULARY.engineering.subcategories.power_electronics = {
+                name: '电力电子与逆变器',
+                icon: '⚡',
+                words: []
+            };
+        }
+        VOCABULARY.engineering.subcategories.power_electronics.words.push(
+            { en: "Inverter", zh: "逆变器", ms: "Penyongsang", ex: "Check inverter status.", ex_zh: "检查逆变器状态。" },
+            { en: "Converter", zh: "变换器", ms: "Penukar", ex: "Test converter output.", ex_zh: "测试变换器输出。" },
+            { en: "Rectifier", zh: "整流器", ms: "Penerus", ex: "Inspect rectifier circuit.", ex_zh: "检查整流器电路。" },
+            { en: "DC-DC Converter", zh: "直流变换器", ms: "Penukar DC-DC", ex: "Adjust DC-DC converter voltage.", ex_zh: "调整直流变换器电压。" },
+            { en: "AC Drive", zh: "交流驱动器", ms: "Pemacu AC", ex: "Calibrate AC drive.", ex_zh: "校准交流驱动器。" },
+            { en: "Variable Frequency Drive", zh: "变频驱动器", ms: "Pemacu Frekuensi Boleh Ubah", ex: "Configure VFD parameters.", ex_zh: "配置变频驱动器参数。" },
+            { en: "IGBT Module", zh: "IGBT模块", ms: "Modul IGBT", ex: "Replace IGBT module.", ex_zh: "更换IGBT模块。" },
+            { en: "MOSFET", zh: "金属氧化物半导体场效应管", ms: "MOSFET", ex: "Test MOSFET switching.", ex_zh: "测试MOSFET开关。" },
+            { en: "Power Module", zh: "功率模块", ms: "Modul Kuasa", ex: "Monitor power module temperature.", ex_zh: "监控功率模块温度。" },
+            { en: "Heat Sink", zh: "散热器", ms: "Penyerap Haba", ex: "Clean heat sink fins.", ex_zh: "清洁散热器翅片。" },
+            { en: "Thermal Management", zh: "热管理", ms: "Pengurusan Terma", ex: "Optimize thermal management.", ex_zh: "优化热管理。" },
+            { en: "Cooling Fan", zh: "冷却风扇", ms: "Kipas Penyejuk", ex: "Check cooling fan speed.", ex_zh: "检查冷却风扇转速。" },
+            { en: "Gate Driver", zh: "栅极驱动器", ms: "Pemacu Get", ex: "Inspect gate driver circuit.", ex_zh: "检查栅极驱动电路。" },
+            { en: "Snubber Circuit", zh: "缓冲电路", ms: "Litar Snubber", ex: "Design snubber circuit.", ex_zh: "设计缓冲电路。" },
+            { en: "EMI Filter", zh: "电磁干扰滤波器", ms: "Penapis EMI", ex: "Install EMI filter.", ex_zh: "安装电磁干扰滤波器。" },
+            { en: "PWM", zh: "脉宽调制", ms: "PWM", ex: "Adjust PWM frequency.", ex_zh: "调整脉宽调制频率。" },
+            { en: "Switching Frequency", zh: "开关频率", ms: "Frekuensi Pensuisan", ex: "Increase switching frequency.", ex_zh: "提高开关频率。" },
+            { en: "Power Factor Correction", zh: "功率因数校正", ms: "Pembetulan Faktor Kuasa", ex: "Enable PFC function.", ex_zh: "启用功率因数校正功能。" },
+            { en: "MPPT", zh: "最大功率点跟踪", ms: "MPPT", ex: "Calibrate MPPT algorithm.", ex_zh: "校准最大功率点跟踪算法。" },
+            { en: "Grid-Tied", zh: "并网", ms: "Bersambung Grid", ex: "Connect grid-tied inverter.", ex_zh: "连接并网逆变器。" },
+            { en: "Off-Grid", zh: "离网", ms: "Di Luar Grid", ex: "Configure off-grid mode.", ex_zh: "配置离网模式。" },
+            { en: "Island Mode", zh: "孤岛模式", ms: "Mod Pulau", ex: "Test island mode operation.", ex_zh: "测试孤岛模式运行。" },
+            { en: "Soft Start", zh: "软启动", ms: "Mula Lembut", ex: "Enable soft start feature.", ex_zh: "启用软启动功能。" },
+            { en: "Bypass", zh: "旁路", ms: "Pintas", ex: "Switch to bypass mode.", ex_zh: "切换到旁路模式。" },
+            { en: "Dead Time", zh: "死区时间", ms: "Masa Mati", ex: "Adjust dead time setting.", ex_zh: "调整死区时间设置。" },
+            { en: "Input Voltage", zh: "输入电压", ms: "Voltan Input", ex: "Measure input voltage.", ex_zh: "测量输入电压。" },
+            { en: "Output Voltage", zh: "输出电压", ms: "Voltan Output", ex: "Regulate output voltage.", ex_zh: "调节输出电压。" },
+            { en: "Output Current", zh: "输出电流", ms: "Arus Output", ex: "Monitor output current.", ex_zh: "监控输出电流。" },
+            { en: "Bus Voltage", zh: "母线电压", ms: "Voltan Bas", ex: "Check DC bus voltage.", ex_zh: "检查直流母线电压。" },
+            { en: "Nominal Power", zh: "额定功率", ms: "Kuasa Nominal", ex: "Verify nominal power rating.", ex_zh: "验证额定功率。" },
+            { en: "Peak Power", zh: "峰值功率", ms: "Kuasa Puncak", ex: "Test peak power capacity.", ex_zh: "测试峰值功率容量。" },
+            { en: "Standby Mode", zh: "待机模式", ms: "Mod Sedia", ex: "Enter standby mode.", ex_zh: "进入待机模式。" },
+            { en: "Ripple", zh: "纹波", ms: "Riak", ex: "Reduce output ripple.", ex_zh: "减少输出纹波。" },
+            { en: "Harmonic", zh: "谐波", ms: "Harmonik", ex: "Analyze harmonic distortion.", ex_zh: "分析谐波失真。" },
+            { en: "Isolation Transformer", zh: "隔离变压器", ms: "Pengubah Pengasingan", ex: "Install isolation transformer.", ex_zh: "安装隔离变压器。" },
+            { en: "Overvoltage Protection", zh: "过压保护", ms: "Perlindungan Lebih Voltan", ex: "Test overvoltage protection.", ex_zh: "测试过压保护。" },
+            { en: "Overcurrent Protection", zh: "过流保护", ms: "Perlindungan Lebih Arus", ex: "Set overcurrent limit.", ex_zh: "设置过流限制。" },
+            { en: "Overtemperature Protection", zh: "过温保护", ms: "Perlindungan Lebih Suhu", ex: "Verify overtemperature protection.", ex_zh: "验证过温保护。" },
+            { en: "Short Circuit Protection", zh: "短路保护", ms: "Perlindungan Litar Pintas", ex: "Test short circuit protection.", ex_zh: "测试短路保护。" },
+            { en: "Ground Fault", zh: "接地故障", ms: "Kerosakan Tanah", ex: "Detect ground fault.", ex_zh: "检测接地故障。" },
+            { en: "Arc Fault", zh: "电弧故障", ms: "Kerosakan Arka", ex: "Prevent arc fault.", ex_zh: "预防电弧故障。" },
+            { en: "Fault Code", zh: "故障代码", ms: "Kod Kerosakan", ex: "Read fault code.", ex_zh: "读取故障代码。" },
+            { en: "Alarm", zh: "报警", ms: "Penggera", ex: "Reset alarm.", ex_zh: "重置报警。" },
+            { en: "Conduction Loss", zh: "导通损耗", ms: "Kerugian Konduksi", ex: "Calculate conduction loss.", ex_zh: "计算导通损耗。" },
+            { en: "Switching Loss", zh: "开关损耗", ms: "Kerugian Pensuisan", ex: "Minimize switching loss.", ex_zh: "最小化开关损耗。" },
+            { en: "Efficiency Curve", zh: "效率曲线", ms: "Lengkung Kecekapan", ex: "Plot efficiency curve.", ex_zh: "绘制效率曲线。" },
+            { en: "THD", zh: "总谐波失真", ms: "THD", ex: "Measure THD percentage.", ex_zh: "测量总谐波失真百分比。" },
+            { en: "Response Time", zh: "响应时间", ms: "Masa Respons", ex: "Optimize response time.", ex_zh: "优化响应时间。" },
+            { en: "Load Regulation", zh: "负载调整率", ms: "Peraturan Beban", ex: "Test load regulation.", ex_zh: "测试负载调整率。" },
+            { en: "Line Regulation", zh: "线性调整率", ms: "Peraturan Talian", ex: "Verify line regulation.", ex_zh: "验证线性调整率。" }
+        );
+    }
+
 })();
