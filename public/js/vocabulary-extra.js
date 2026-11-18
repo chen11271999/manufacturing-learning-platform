@@ -27,7 +27,7 @@
 
     // quality/defects - 20 new words
     if (VOCABULARY.quality && VOCABULARY.quality.subcategories.defects) {
-        VOCABULARY.quality.subcategories.defects.words.push(,
+        VOCABULARY.quality.subcategories.defects.words.push(
             { en: "Void", zh: "空洞", ms: "Lompang", ex: "Detect void.", ex_zh: "检测空洞。" },
             { en: "Rough Surface", zh: "表面粗糙", ms: "Permukaan Kasar", ex: "Smooth rough surface.", ex_zh: "光滑表面粗糙。" },
             { en: "Hot Tear", zh: "热裂", ms: "Koyakan Panas", ex: "Prevent hot tear.", ex_zh: "防止热裂。" },
@@ -63,7 +63,7 @@
 
     // production/process - 20 new words
     if (VOCABULARY.production && VOCABULARY.production.subcategories.process) {
-        VOCABULARY.production.subcategories.process.words.push(,
+        VOCABULARY.production.subcategories.process.words.push(
             { en: "Casting", zh: "铸造", ms: "Pengecoran", ex: "Prepare casting.", ex_zh: "准备铸造。" },
             { en: "Rolling", zh: "轧制", ms: "Penggulungan", ex: "Adjust rolling.", ex_zh: "调整轧制。" },
             { en: "Bending", zh: "弯曲", ms: "Pembengkokan", ex: "Check bending.", ex_zh: "检查弯曲。" },
@@ -85,7 +85,7 @@
 
     // production/equipment - 20 new words
     if (VOCABULARY.production && VOCABULARY.production.subcategories.equipment) {
-        VOCABULARY.production.subcategories.equipment.words.push(,
+        VOCABULARY.production.subcategories.equipment.words.push(
             { en: "Grinding Machine", zh: "磨床", ms: "Mesin Pengisar", ex: "Run grinding machine.", ex_zh: "运行磨床。" },
             { en: "Drilling Machine", zh: "钻床", ms: "Mesin Gerudi", ex: "Set drilling machine.", ex_zh: "设置钻床。" },
             { en: "Sawing Machine", zh: "锯床", ms: "Mesin Gergaji", ex: "Start sawing machine.", ex_zh: "启动锯床。" },
@@ -213,7 +213,7 @@
 
     // daily/communication - 20 new words
     if (VOCABULARY.daily && VOCABULARY.daily.subcategories.communication) {
-        VOCABULARY.daily.subcategories.communication.words.push(,
+        VOCABULARY.daily.subcategories.communication.words.push(
             { en: "Discussion", zh: "讨论", ms: "Perbincangan", ex: "Join discussion.", ex_zh: "加入讨论。" },
             { en: "Agreement", zh: "同意", ms: "Persetujuan", ex: "Reach agreement.", ex_zh: "达成一致。" },
             { en: "Disagreement", zh: "不同意", ms: "Ketidaksetujuan", ex: "Express disagreement.", ex_zh: "表达不同意。" },
@@ -227,7 +227,7 @@
 
     // daily/malaysia - 20 new words
     if (VOCABULARY.daily && VOCABULARY.daily.subcategories.malaysia) {
-        VOCABULARY.daily.subcategories.malaysia.words.push(,
+        VOCABULARY.daily.subcategories.malaysia.words.push(
             { en: "Mamak", zh: "嘛嘛档", ms: "Mamak", ex: "Go to Mamak.", ex_zh: "去嘛嘛档。" },
             { en: "Mangosteen", zh: "山竹", ms: "Manggis", ex: "Try Mangosteen.", ex_zh: "尝山竹。" },
             { en: "Rambutan", zh: "红毛丹", ms: "Rambutan", ex: "Pick Rambutan.", ex_zh: "摘红毛丹。" },
@@ -273,7 +273,7 @@
 
     // safety/equipment - 20 new words
     if (VOCABULARY.safety && VOCABULARY.safety.subcategories.equipment) {
-        VOCABULARY.safety.subcategories.equipment.words.push(,
+        VOCABULARY.safety.subcategories.equipment.words.push(
             { en: "Work Gloves", zh: "工作手套", ms: "Sarung Tangan Kerja", ex: "Use work gloves.", ex_zh: "使用工作手套。" },
             { en: "Face Shield", zh: "面罩", ms: "Perisai Muka", ex: "Wear face shield.", ex_zh: "戴面罩。" },
             { en: "Safety Harness", zh: "安全带", ms: "Abah-abah Keselamatan", ex: "Attach safety harness.", ex_zh: "系好安全带。" },

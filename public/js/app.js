@@ -592,7 +592,6 @@ function switchAdminTab(btn, tab) {
         }
         html += '</div>';
         content.innerHTML = html;
-    }
     } else if (tab === 'dialogue') {
         var html = '<div class="dialogue-section"><div class="dialogue-title">\u2795 添加新对话</div>';
         html += '<input id="dialogueTitle" placeholder="对话标题 (如：客户验厂)" style="width:100%;padding:10px;border:2px solid #e9ecef;border-radius:8px;margin-bottom:8px">';
@@ -629,6 +628,7 @@ function switchAdminTab(btn, tab) {
         html += '</div></div>';
         content.innerHTML = html;
         addWritingLine();
+    }
 }
 
 async function loadCustomWords() {
