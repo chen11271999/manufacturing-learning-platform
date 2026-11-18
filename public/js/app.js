@@ -249,13 +249,16 @@ function showCategory(key) {
         for (const w of sub.words) {
             const ph = getPhonetic(w.en);
             const se = w.en.replace(/'/g, "\\'"), sm = w.ms.replace(/'/g, "\\'");
-            html += '<div class="vocab-card-mini">' +
+            var isLearned = isWordLearned(w.en);
+            html += '<div class="vocab-card-mini' + (isLearned ? ' word-learned' : '') + '">' +
                 '<div class="vcm-zh">' + w.zh + '</div>' +
                 '<div class="vcm-en">' + w.en + (ph ? ' <span class="vcm-phonetic">' + ph + '</span>' : '') + '</div>' +
                 '<div class="vcm-ms">' + w.ms + '</div>' +
                 '<div class="vcm-btns">' +
                 '<button class="speak-mini" onclick="speak(\'' + se + '\')">🔊 EN</button>' +
-                '<button class="speak-mini" onclick="speakMY(\'' + sm + '\')">🔊 MY</button></div>' +
+                '<button class="speak-mini" onclick="speakMY(\'' + sm + '\')">🔊 MY</button>' +
+                (isLearned ? '<span class="learned-badge">✅ 已学</span>' : '<button class="learn-btn" onclick="handleLearnWord(this, \'' + w.en.replace(/'/g, "\\'") + '\')">📖 学习</button>') +
+                '</div>' +
                 '<div class="vcm-ex"><span>' + w.ex + '</span><br><span style="color:#6c757d;font-size:12px">' + w.ex_zh + '</span></div></div>';
         }
         html += '</div>';
